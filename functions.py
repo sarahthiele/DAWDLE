@@ -4,7 +4,7 @@
 # MW-like galaxies of DWDs that are orbiting in the LISA frequency band at present.
 #
 # Authors: Sarah Thiele & Dr. Katelyn Breivik
-# Last updated: April 20, 2021
+# Last updated: April 21, 2021
 
 #===================================================================================
 # Imports and Constants:
@@ -560,10 +560,15 @@ def LISA_FIRE_galaxy(filename, i, label, ratio, binfrac, ZTF, Tyson):
     # Choose metallicity bin
     met_start = met_arr[i] / Z_sun
     met_end = met_arr[i+1] / Z_sun
-    conv = pd.read_hdf(filename, key='conv')
     
     # Calculating the formation time of each component:
     bpp = pd.read_hdf(filename, key='bpp')
+    if label == '10_10' or '11_10':
+        conv = pd.read_hdf(filename, key='conv')
+    elif label == '11_11':
+        conv = bpp.loc[(bpp.kstar_1==11)&(bpp.kstar_2==11)].groupby('bin_num').first()  
+    elif label == '12':
+         conv = bpp.loc[(bpp.kstar_1==12)&(bpp.kstar_2.isin([10,11,12]))].groupby('bin_num').first()  
     t1formation = bpp.loc[bpp.kstar_1.isin([10, 11, 12])].groupby('bin_num').first().tphys.values
     conv['tphys_1'] = t1formation
     t2formation = bpp.loc[bpp.kstar_2.isin([10, 11, 12])].groupby('bin_num').first().tphys.values
@@ -578,7 +583,11 @@ def LISA_FIRE_galaxy(filename, i, label, ratio, binfrac, ZTF, Tyson):
     
     
     # Use ratio to scale to astrophysical pop w/ specific binary frac.
-    mass_binaries = pd.read_hdf(filename, key='mass_binaries').iloc[-1]
+    try:
+        mass_binaries = pd.read_hdf(filename, key='mass_stars').iloc[-1]
+    except:
+        print('m_binaries key')
+        mass_binaries = pd.read_hdf(filename, key='mass_binaries').iloc[-1]
     mass_total = (1 + ratio) * mass_binaries
     DWD_per_mass = len(conv) / mass_total
     N_astro = DWD_per_mass * M_astro  # num of binaries per star particle
@@ -904,3 +913,4 @@ def galaxy_files_12_05():
             'final_galaxy_12_0.01996108_0.5.hdf',
             'final_galaxy_12_0.03_0.5.hdf']
     return files
+
