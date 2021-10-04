@@ -1,11 +1,13 @@
 #=========================================================================
-# This script creates LISA DWD galaxies across 13 metallicity bins,
+# This script creates LISA DWD galaxies across 15 metallicity bins,
 # incorporating the metallicity-dependent binary fraction as
 # discussed in Thiele et al. (2021). It is the ongoing,
 # unstable version. Older versions can be found at (insert link).
 #
 # Author: Sarah Thiele
-# Last updated: April 20th, 2021
+# Last updated: Oct 2nd, 2021
+# Last changes: take out ZTF/Tyson files, add in option to not write-out to 
+# interfiles. New functions module (funcs_v1)
 #=========================================================================
 
 import pandas as pd
@@ -18,11 +20,11 @@ from astropy import units as u
 import astropy.coordinates as coords
 from astropy.time import Time
 import argparse
-from functions import *
+from funcs_v1 import *
 import legwork.utils as utils
 import legwork.strain as strain
 import legwork.snr as snr
-import legwork.lisa as lisa
+import legwork.psd as lisa
 import legwork.evol as evol
 from legwork import source
 
@@ -44,11 +46,13 @@ M_astro = 7070  # FIRE star particle mass in solar masses
 mag_lim = 23  # chosen bolometric magnitude limit
 parser = argparse.ArgumentParser()
 parser.add_argument("--DWD", default="He_He", type=str)
+parser.add_argument("--interfile", default='False', type=str)
 args = parser.parse_args()
 
 # path is the path to dat files and FIRE file
-path = '/mnt/raid-cita/sthiele/DWD_Met_Grid/'
-FIRE = pd.read_hdf(path + 'FIRE.h5').sort_values('met')
+pathtodat = '../reduced_datfiles/reduced_'
+pathtoFIRE = ''
+FIRE = pd.read_hdf(pathtoFIRE + 'FIRE.h5').sort_values('met')
 
 # Generate array of metallicities:
 met_arr = np.logspace(np.log10(1e-4), np.log10(0.03), 15)
@@ -66,19 +70,23 @@ ratios = np.array([0.68, 0.71, 0.74, 0.78, 0.82, 0.86, 0.9,
 
 ratio_05 = 0.64
 
-# set ZTF and/or Tyson to True to also generate special files
-ZTF = True
-Tyson = True
+# setting interfile to True will produce intermediate files saving
+# populations before final LISA files.
+
+if args.interfile == 'True':
+    interfile = True
+elif args.interfile == 'False':
+    interfile = False
 
 # Run Code:
 if args.DWD == 'He_He':
-    fname, label = getfiles_He_He(path)
+    fname, label = getfiles_He_He(pathtodat)
 elif args.DWD == 'CO_He':
-        fname, label = getfiles_CO_He(path)
+        fname, label = getfiles_CO_He(pathtodat)
 elif args.DWD == 'CO_CO':
-    fname, label = getfiles_CO_CO(path)
+    fname, label = getfiles_CO_CO(pathtodat)
 elif args.DWD == 'ONe':
-    fname, label = getfiles_ONe(path)
+    fname, label = getfiles_ONe(pathtodat)
 
 # Run through all metallicities for metallicity-dependent
 # binary fraction and binary fraction of 0.5
@@ -86,8 +94,8 @@ i = 0
 for f in fname:
     ratio = ratios[i] 
     binfrac = binfracs[i]
-    LISA_FIRE_galaxy(f, i, label, ratio, binfrac, ZTF, Tyson)
-    LISA_FIRE_galaxy(f, i, label, ratio_05, 0.5, ZTF, Tyson)
+    make_galaxy(f, i, label, ratio, binfrac, interfile)
+    make_galaxy(f, i, label, ratio_05, 0.5, interfile)
     i += 1
 
 
