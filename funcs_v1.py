@@ -500,6 +500,9 @@ def mag_bol(data, i):
     return m_tot
 
 def LISA_calcs(LISA_band):
+    '''
+    get h_0, chirp mass and chirp values for LISA-band systems.
+    '''
     f_orb = LISA_band.f_gw.values / 2 * u.s**(-1)
     ecc = np.zeros(len(LISA_band))
     m1 = LISA_band.mass_1.values * u.M_sun
@@ -514,6 +517,7 @@ def LISA_calcs(LISA_band):
     
     LISA_band['h_0'] = h_0
     LISA_band['fdot'] = chirps.value
+    LISA_band['']
     
     return LISA_band
 
@@ -791,7 +795,7 @@ def make_galaxy(filename, i, label, ratio, binfrac, interfile):
     
     return
 
-def Lband_files_10_10_var(path):
+def Lband_files_10_10_var():
     files = ['Lband_10_10_0.0001_0.4847.hdf',
             'Lband_10_10_0.00015029_0.4732.hdf',
             'Lband_10_10_0.00022588_0.4618.hdf',
@@ -935,6 +939,146 @@ def Lband_files_12_05():
             'Lband_12_0.03_0.5.hdf']
     return files
 
+def galaxy_files_10_10_var():
+    files = ['final_galaxy_10_10_0.0001_0.4847.hdf',
+            'final_galaxy_10_10_0.00015029_0.4732.hdf',
+            'final_galaxy_10_10_0.00022588_0.4618.hdf',
+            'final_galaxy_10_10_0.00033948_0.4503.hdf',
+            'final_galaxy_10_10_0.00051021_0.4388.hdf',
+            'final_galaxy_10_10_0.00076681_0.4274.hdf',
+            'final_galaxy_10_10_0.00115245_0.4159.hdf',
+            'final_galaxy_10_10_0.00173205_0.4044.hdf',
+            'final_galaxy_10_10_0.00260314_0.3776.hdf',
+            'final_galaxy_10_10_0.00391233_0.3426.hdf',
+            'final_galaxy_10_10_0.00587993_0.3076.hdf',
+            'final_galaxy_10_10_0.0088371_0.2726.hdf',
+            'final_galaxy_10_10_0.01328149_0.2376.hdf',
+            'final_galaxy_10_10_0.01996108_0.2027.hdf',
+            'final_galaxy_10_10_0.03_0.1677.hdf']
+    return files
 
+def galaxy_files_11_10_var():
+    files = ['final_galaxy_11_10_0.0001_0.4847.hdf',
+            'final_galaxy_11_10_0.00015029_0.4732.hdf',
+            'final_galaxy_11_10_0.00022588_0.4618.hdf',
+            'final_galaxy_11_10_0.00033948_0.4503.hdf',
+            'final_galaxy_11_10_0.00051021_0.4388.hdf',
+            'final_galaxy_11_10_0.00076681_0.4274.hdf',
+            'final_galaxy_11_10_0.00115245_0.4159.hdf',
+            'final_galaxy_11_10_0.00173205_0.4044.hdf',
+            'final_galaxy_11_10_0.00260314_0.3776.hdf',
+            'final_galaxy_11_10_0.00391233_0.3426.hdf',
+            'final_galaxy_11_10_0.00587993_0.3076.hdf',
+            'final_galaxy_11_10_0.0088371_0.2726.hdf',
+            'final_galaxy_11_10_0.01328149_0.2376.hdf',
+            'final_galaxy_11_10_0.01996108_0.2027.hdf',
+            'final_galaxy_11_10_0.03_0.1677.hdf']
+    return files
 
+def galaxy_files_11_11_var():
+    files = ['final_galaxy_11_11_0.0001_0.4847.hdf',
+            'final_galaxy_11_11_0.00015029_0.4732.hdf',
+            'final_galaxy_11_11_0.00022588_0.4618.hdf',
+            'final_galaxy_11_11_0.00033948_0.4503.hdf',
+            'final_galaxy_11_11_0.00051021_0.4388.hdf',
+            'final_galaxy_11_11_0.00076681_0.4274.hdf',
+            'final_galaxy_11_11_0.00115245_0.4159.hdf',
+            'final_galaxy_11_11_0.00173205_0.4044.hdf',
+            'final_galaxy_11_11_0.00260314_0.3776.hdf',
+            'final_galaxy_11_11_0.00391233_0.3426.hdf',
+            'final_galaxy_11_11_0.00587993_0.3076.hdf',
+            'final_galaxy_11_11_0.0088371_0.2726.hdf',
+            'final_galaxy_11_11_0.01328149_0.2376.hdf',
+            'final_galaxy_11_11_0.01996108_0.2027.hdf',
+            'final_galaxy_11_11_0.03_0.1677.hdf']
+    return files
 
+def galaxy_files_12_var():
+    files = ['final_galaxy_12_0.0001_0.4847.hdf',
+            'final_galaxy_12_0.00015029_0.4732.hdf',
+            'final_galaxy_12_0.00022588_0.4618.hdf',
+            'final_galaxy_12_0.00033948_0.4503.hdf',
+            'final_galaxy_12_0.00051021_0.4388.hdf',
+            'final_galaxy_12_0.00076681_0.4274.hdf',
+            'final_galaxy_12_0.00115245_0.4159.hdf',
+            'final_galaxy_12_0.00173205_0.4044.hdf',
+            'final_galaxy_12_0.00260314_0.3776.hdf',
+            'final_galaxy_12_0.00391233_0.3426.hdf',
+            'final_galaxy_12_0.00587993_0.3076.hdf',
+            'final_galaxy_12_0.0088371_0.2726.hdf',
+            'final_galaxy_12_0.01328149_0.2376.hdf',
+            'final_galaxy_12_0.01996108_0.2027.hdf',
+            'final_galaxy_12_0.03_0.1677.hdf']
+    return files
+
+def galaxy_files_10_10_05():
+    files = ['final_galaxy_10_10_0.0001_0.5.hdf',
+            'final_galaxy_10_10_0.00015029_0.5.hdf',
+            'final_galaxy_10_10_0.00022588_0.5.hdf',
+            'final_galaxy_10_10_0.00033948_0.5.hdf',
+            'final_galaxy_10_10_0.00051021_0.5.hdf',
+            'final_galaxy_10_10_0.00076681_0.5.hdf',
+            'final_galaxy_10_10_0.00115245_0.5.hdf',
+            'final_galaxy_10_10_0.00173205_0.5.hdf',
+            'final_galaxy_10_10_0.00260314_0.5.hdf',
+            'final_galaxy_10_10_0.00391233_0.5.hdf',
+            'final_galaxy_10_10_0.00587993_0.5.hdf',
+            'final_galaxy_10_10_0.0088371_0.5.hdf',
+            'final_galaxy_10_10_0.01328149_0.5.hdf',
+            'final_galaxy_10_10_0.01996108_0.5.hdf',
+            'final_galaxy_10_10_0.03_0.5.hdf']
+    return files
+
+def galaxy_files_11_10_05():
+    files = ['final_galaxy_11_10_0.0001_0.5.hdf',
+            'final_galaxy_11_10_0.00015029_0.5.hdf',
+            'final_galaxy_11_10_0.00022588_0.5.hdf',
+            'final_galaxy_11_10_0.00033948_0.5.hdf',
+            'final_galaxy_11_10_0.00051021_0.5.hdf',
+            'final_galaxy_11_10_0.00076681_0.5.hdf',
+            'final_galaxy_11_10_0.00115245_0.5.hdf',
+            'final_galaxy_11_10_0.00173205_0.5.hdf',
+            'final_galaxy_11_10_0.00260314_0.5.hdf',
+            'final_galaxy_11_10_0.00391233_0.5.hdf',
+            'final_galaxy_11_10_0.00587993_0.5.hdf',
+            'final_galaxy_11_10_0.0088371_0.5.hdf',
+            'final_galaxy_11_10_0.01328149_0.5.hdf',
+            'final_galaxy_11_10_0.01996108_0.5.hdf',
+            'final_galaxy_11_10_0.03_0.5.hdf']
+    return files
+
+def galaxy_files_11_11_05():
+    files = ['final_galaxy_11_11_0.0001_0.5.hdf',
+            'final_galaxy_11_11_0.00015029_0.5.hdf',
+            'final_galaxy_11_11_0.00022588_0.5.hdf',
+            'final_galaxy_11_11_0.00033948_0.5.hdf',
+            'final_galaxy_11_11_0.00051021_0.5.hdf',
+            'final_galaxy_11_11_0.00076681_0.5.hdf',
+            'final_galaxy_11_11_0.00115245_0.5.hdf',
+            'final_galaxy_11_11_0.00173205_0.5.hdf',
+            'final_galaxy_11_11_0.00260314_0.5.hdf',
+            'final_galaxy_11_11_0.00391233_0.5.hdf',
+            'final_galaxy_11_11_0.00587993_0.5.hdf',
+            'final_galaxy_11_11_0.0088371_0.5.hdf',
+            'final_galaxy_11_11_0.01328149_0.5.hdf',
+            'final_galaxy_11_11_0.01996108_0.5.hdf',
+            'final_galaxy_11_11_0.03_0.5.hdf']
+    return files
+
+def galaxy_files_12_05():
+    files = ['final_galaxy_12_0.0001_0.5.hdf',
+            'final_galaxy_12_0.00015029_0.5.hdf',
+            'final_galaxy_12_0.00022588_0.5.hdf',
+            'final_galaxy_12_0.00033948_0.5.hdf',
+            'final_galaxy_12_0.00051021_0.5.hdf',
+            'final_galaxy_12_0.00076681_0.5.hdf',
+            'final_galaxy_12_0.00115245_0.5.hdf',
+            'final_galaxy_12_0.00173205_0.5.hdf',
+            'final_galaxy_12_0.00260314_0.5.hdf',
+            'final_galaxy_12_0.00391233_0.5.hdf',
+            'final_galaxy_12_0.00587993_0.5.hdf',
+            'final_galaxy_12_0.0088371_0.5.hdf',
+            'final_galaxy_12_0.01328149_0.5.hdf',
+            'final_galaxy_12_0.01996108_0.5.hdf',
+            'final_galaxy_12_0.03_0.5.hdf']
+    return files

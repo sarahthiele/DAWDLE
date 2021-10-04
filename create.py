@@ -6,7 +6,7 @@
 #
 # Author: Sarah Thiele
 # Last updated: Oct 2nd, 2021
-# Last changes: take out ZTF/Tyson files, add in option to not write-out to 
+# Last changes to create.py: take out ZTF/Tyson files, add in option to not write-out to 
 # interfiles. New functions module (funcs_v1)
 #=========================================================================
 
@@ -97,5 +97,3 @@ for f in fname:
     make_galaxy(f, i, label, ratio, binfrac, interfile)
     make_galaxy(f, i, label, ratio_05, 0.5, interfile)
     i += 1
-
-
