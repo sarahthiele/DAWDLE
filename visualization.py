@@ -5,6 +5,7 @@ from matplotlib.colors import TwoSlopeNorm
 from matplotlib import rcParams
 from matplotlib.lines import Line2D
 import matplotlib.colors as col
+import tqdm
 
 rcParams['font.family'] = 'serif'
 rcParams['font.size'] = 14
@@ -13,7 +14,8 @@ rcParams['mathtext.default'] = 'regular'
 obs_sec = 4 * u.yr.to('s')
 obs_hz = 1 / obs_sec
 
-def plot_FIRE_F_mass():
+def plot_FIRE_F_mass(FIRE_path, met_arr):
+    FIRE = pd.read_hdf(FIRE_path+'FIRE.h5')
     fig, ax = plt.subplots()
     plt.grid(lw=0.25, which='both')
     bins = np.append(met_arr[1:-1]/Z_sun, FIRE.met.max())
@@ -47,7 +49,8 @@ def plot_FIRE_F_mass():
     return
 
 
-def plot_FIRE_F_NSP():
+def plot_FIRE_F_NSP(FIRE_path, met_arr):
+    FIRE = pd.read_hdf(FIRE_path+'FIRE.h5')
     fig, ax = plt.subplots()
     plt.grid(lw=0.25, which='both')
     bins = np.append(met_arr[1:-1]/Z_sun, FIRE.met.max())
@@ -76,7 +79,8 @@ def plot_FIRE_F_NSP():
 
     return
 
-def plot_FIREpos():
+def plot_FIREpos(FIRE_path):
+    FIRE = pd.read_hdf(FIRE_path+'FIRE.h5')
     X = FIRE.xGx
     Y = FIRE.yGx
     Z = FIRE.zGx
@@ -94,7 +98,7 @@ def plot_FIREpos():
 
 
 def get_formeff(pathtodat, pathtoeff, pathtoLband, getfrom):
-    def formeff(datfiles, Lbandfiles, pathtoLband, label, model, getfrom):
+    def formeff(datfiles, Lbandfiles, pathtodat, pathtoLband, label, model, getfrom):
         lenconv = []
         masslist = []
         for i in range(15):
@@ -104,23 +108,18 @@ def get_formeff(pathtodat, pathtoeff, pathtoLband, getfrom):
             elif model == 'FZ':
                 binfrac = binfracs[i]
                 ratio = ratios[i]
-            bpp = pd.read_hdf(datfiles[i], key='bpp')
             if getfrom == 'Lband':
                 mass = pd.read_hdf(pathtoLband + Lbandfiles[i], key='mass_total')
-                conv = pd.read_hdf(datfiles[i], key='conv')
+                conv = pd.read_hdf(pathtodat + datfiles[i], key='conv')
             elif getfrom == 'dat':
                 try:
-                    mass_binaries = pd.read_hdf(datfiles[i], key='mass_stars').iloc[-1]
+                    mass_binaries = pd.read_hdf(pathtodat + datfiles[i], key='mass_stars').iloc[-1]
                 except:
                     print('m_binaries key')
-                    mass_binaries = pd.read_hdf(datfiles[i], key='mass_binaries').iloc[-1]
+                    mass_binaries = pd.read_hdf(pathtodat + datfiles[i], key='mass_binaries').iloc[-1]
                 mass = (1 + ratio) * mass_binaries
-                if label == '10_10' or label == '11_10':
-                    conv = pd.read_hdf(datfiles[i], key='conv')
-                elif label == '11_11':
-                    conv = bpp.loc[(bpp.kstar_1==11)&(bpp.kstar_2==11)].groupby('bin_num').first()  
-                elif label == '12':
-                     conv = bpp.loc[(bpp.kstar_1==12)&(bpp.kstar_2.isin([10,11,12]))].groupby('bin_num').first()                 
+                conv = pd.read_hdf(pathtodat + datfiles[i], key='conv')
+                            
             masslist.append(mass)
             lenconv.append(len(conv))
 
@@ -129,38 +128,24 @@ def get_formeff(pathtodat, pathtoeff, pathtoLband, getfrom):
         eff = lenconv / masslist
         return eff
 
-    files, label = getfiles_He_He(pathtodat)
-    Lbandfiles = Lband_files_10_10_var()
-    effHe = formeff(files, Lbandfiles, pathtoLband, label, 'FZ', getfrom)
-    Lbandfiles = Lband_files_10_10_05()
-    effHe05 = formeff(files, Lbandfiles, pathtoLband, label, 'F50', getfrom)
-    print('finished He + He')
+    kstar1_list = ['10', '11', '11', '12']
+    kstar2_list = ['10', '10', '11', '10_12']
+    labels = ['He + He', 'CO + He', 'CO + CO', 'ONe + X']
+    
+    eff_var = []
+    eff_05 = []
+    for kstar1, kstar2, label in tqdm.tqdm(zip(kstar1_list, kstar2_list, labels)):
+        files, label = getfiles(kstar1=kstar1, kstar2=kstar2)
+        Lbandfiles = Lband_files(kstar1='10', kstar2='10', var=True)
+        eff_var.append(formeff(files, Lbandfiles, pathtodat, pathtoLband, label, 'FZ', getfrom))
+        Lbandfiles = Lband_files(kstar1='10', kstar2='10', var=False)
+        eff_05.append(formeff(files, Lbandfiles, pathtodat, pathtoLband, label, 'F50', getfrom))
+        print('finished {}'.format(label))
 
-    files, label = getfiles_CO_He(pathtodat)
-    Lbandfiles = Lband_files_11_10_var()
-    effCOHe = formeff(files, Lbandfiles, pathtoLband, label, 'FZ', getfrom)
-    Lbandfiles = Lband_files_11_10_05()
-    effCOHe05 = formeff(files, Lbandfiles, pathtoLband, label, 'F50', getfrom)
-    print('finished CO + He')
-
-    files, label = getfiles_CO_CO(pathtodat)
-    Lbandfiles = Lband_files_11_11_var()
-    effCO = formeff(files, Lbandfiles, pathtoLband, label, 'FZ', getfrom)
-    Lbandfiles = Lband_files_11_11_05()
-    effCO05 = formeff(files, Lbandfiles, pathtoLband, label, 'F50', getfrom)
-    print('finished CO + CO')
-
-    files, label = getfiles_ONe(pathtodat)
-    Lbandfiles = Lband_files_12_var()
-    effONe = formeff(files, Lbandfiles, pathtoLband, label, 'FZ', getfrom)
-    Lbandfiles = Lband_files_12_05()
-    effONe05 = formeff(files, Lbandfiles, pathtoLband, label, 'F50', getfrom)
-    print('finished ONe + XX')
-
-    DWDeff = pd.DataFrame(np.array([effHe, effCOHe, effCO, effONe]).T, columns=['He', 'COHe', 'CO', 'ONe'])
+    DWDeff = pd.DataFrame(np.array(eff_var).T, columns=['He', 'COHe', 'CO', 'ONe'])
     DWDeff.to_hdf(pathtoeff + 'DWDeff_FZ.hdf', key='data')
 
-    DWDeff05 = pd.DataFrame(np.array([effHe05, effCOHe05, effCO05, effONe05]).T, columns=['He', 'COHe', 'CO', 'ONe'])
+    DWDeff05 = pd.DataFrame(np.array(eff_05).T, columns=['He', 'COHe', 'CO', 'ONe'])
     DWDeff05.to_hdf(pathtoeff + 'DWDeff_F50.hdf', key='data')
     
     return

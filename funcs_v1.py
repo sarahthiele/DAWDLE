@@ -47,7 +47,7 @@ sun_zGx = sun_g.z.to('kpc').value
 M_astro = 7070  # FIRE star particle mass in solar masses
 mag_lim = 23  # chosen bolometric magnitude limit
 
-FIRE = pd.read_hdf('FIRE.h5').sort_values('met')
+#FIRE = pd.read_hdf('FIRE.h5').sort_values('met')
 
 # Specific to Thiele et al. (2021), here are the used metallicity
 # array, the associated binary fractions for each Z value, and the ratios 
@@ -60,11 +60,13 @@ met_arr = np.logspace(np.log10(1e-4), np.log10(0.03), 15)
 met_arr = np.round(met_arr, 8)
 met_arr = np.append(0.0, met_arr)
 
-binfracs = np.array([0.4847, 0.4732, 0.4618, 0.4503, 0.4388, 0.4274, 0.4159, 0.4044, 
-		     0.3776, 0.3426, 0.3076, 0.2726, 0.2376, 0.2027, 0.1677])
+binfracs = np.array([0.4847, 0.4732, 0.4618, 0.4503, 0.4388, 
+                     0.4274, 0.4159, 0.4044, 0.3776, 0.3426, 
+                     0.3076, 0.2726, 0.2376, 0.2027, 0.1677])
 
-ratios = np.array([0.68, 0.71, 0.74, 0.78, 0.82, 0.86, 0.9, 
-		   0.94, 1.05, 1.22, 1.44, 1.7 , 2.05, 2.51, 3.17])
+ratios = np.array([0.68, 0.71, 0.74, 0.78, 0.82, 
+                   0.86, 0.9, 0.94, 1.05, 1.22, 
+                   1.44, 1.7 , 2.05, 2.51, 3.17])
 
 ratio_05 = 0.64
 
@@ -173,99 +175,23 @@ def get_ratios(binfracs):
 # File and Organizing Functions:
 #===================================================================================
 
-path = 'datfiles/'
-
-def getfiles_He_He(path):
-    filename1 = path + 'dat_kstar1_10_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.0001.h5'
-    filename2 = path + 'dat_kstar1_10_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00015029.h5'
-    filename3 = path + 'dat_kstar1_10_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00022588.h5'
-    filename4 = path + 'dat_kstar1_10_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00033948.h5'
-    filename5 = path + 'dat_kstar1_10_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00051021.h5'
-    filename6 = path + 'dat_kstar1_10_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00076681.h5'
-    filename7 = path + 'dat_kstar1_10_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00115245.h5'
-    filename8 = path + 'dat_kstar1_10_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00173205.h5'
-    filename9 = path + 'dat_kstar1_10_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00260314.h5'
-    filename10 = path + 'dat_kstar1_10_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00391233.h5'
-    filename11 = path + 'dat_kstar1_10_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00587993.h5'
-    filename12 = path + 'dat_kstar1_10_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.0088371.h5'
-    filename13 = path + 'dat_kstar1_10_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.01328149.h5'
-    filename14 = path + 'dat_kstar1_10_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.01996108.h5'
-    filename15 = path + 'dat_kstar1_10_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.03.h5'
+def getfiles(kstar1, kstar2):
+    met_list = [0.0001, 0.00015029, 0.00022588, 0.00033948, 0.00051021, 
+                0.00076681, 0.00115245, 0.00173205, 0.00260314, 0.00391233, 
+                0.00587993, 0.0088371, 0.01328149, 0.01996108, 0.03]
     
-    filename_list = [filename1, filename2, filename3, filename4, filename5,
-                     filename6, filename7, filename8, filename9, filename10,
-                     filename11, filename12, filename13, filename14, filename15]
-    label = '10_10'
+    filename_list = []
+    for met in met_list:
+        fname = 'dat_kstar1_{}_kstar2_{}_SFstart_13700.0_SFduration_0.0_metallicity_{}.h5'.format(kstar1, kstar2, met)
+        filename_list.append(fname)
+        
+    if kstar1 == '12':
+        label='12'
+    else:
+        label='{}_{}'.format(kstar1, kstar2)
+    
     return filename_list, label
 
-def getfiles_CO_He(path):
-    filename1 = path + 'dat_kstar1_11_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.0001.h5'
-    filename2 = path + 'dat_kstar1_11_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00015029.h5'
-    filename3 = path + 'dat_kstar1_11_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00022588.h5'
-    filename4 = path + 'dat_kstar1_11_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00033948.h5'
-    filename5 = path + 'dat_kstar1_11_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00051021.h5'
-    filename6 = path + 'dat_kstar1_11_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00076681.h5'
-    filename7 = path + 'dat_kstar1_11_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00115245.h5'
-    filename8 = path + 'dat_kstar1_11_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00173205.h5'
-    filename9 = path + 'dat_kstar1_11_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00260314.h5'
-    filename10 = path + 'dat_kstar1_11_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00391233.h5'
-    filename11 = path + 'dat_kstar1_11_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.00587993.h5'
-    filename12 = path + 'dat_kstar1_11_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.0088371.h5'
-    filename13 = path + 'dat_kstar1_11_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.01328149.h5'
-    filename14 = path + 'dat_kstar1_11_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.01996108.h5'
-    filename15 = path + 'dat_kstar1_11_kstar2_10_SFstart_13700.0_SFduration_0.0_metallicity_0.03.h5'
-    
-    filename_list = [filename1, filename2, filename3, filename4, filename5,
-                     filename6, filename7, filename8, filename9, filename10,
-                     filename11, filename12, filename13, filename14, filename15]
-    label = '11_10'
-    return filename_list, label
-
-def getfiles_CO_CO(path):
-    filename1 = path + 'dat_kstar1_11_kstar2_11_SFstart_13700.0_SFduration_0.0_metallicity_0.0001.h5'
-    filename2 = path + 'dat_kstar1_11_kstar2_11_SFstart_13700.0_SFduration_0.0_metallicity_0.00015029.h5'
-    filename3 = path + 'dat_kstar1_11_kstar2_11_SFstart_13700.0_SFduration_0.0_metallicity_0.00022588.h5'
-    filename4 = path + 'dat_kstar1_11_kstar2_11_SFstart_13700.0_SFduration_0.0_metallicity_0.00033948.h5'
-    filename5 = path + 'dat_kstar1_11_kstar2_11_SFstart_13700.0_SFduration_0.0_metallicity_0.00051021.h5'
-    filename6 = path + 'dat_kstar1_11_kstar2_11_SFstart_13700.0_SFduration_0.0_metallicity_0.00076681.h5'
-    filename7 = path + 'dat_kstar1_11_kstar2_11_SFstart_13700.0_SFduration_0.0_metallicity_0.00115245.h5'
-    filename8 = path + 'dat_kstar1_11_kstar2_11_SFstart_13700.0_SFduration_0.0_metallicity_0.00173205.h5'
-    filename9 = path + 'dat_kstar1_11_kstar2_11_SFstart_13700.0_SFduration_0.0_metallicity_0.00260314.h5'
-    filename10 = path + 'dat_kstar1_11_kstar2_11_SFstart_13700.0_SFduration_0.0_metallicity_0.00391233.h5'
-    filename11 = path + 'dat_kstar1_11_kstar2_11_SFstart_13700.0_SFduration_0.0_metallicity_0.00587993.h5'
-    filename12 = path + 'dat_kstar1_11_kstar2_11_SFstart_13700.0_SFduration_0.0_metallicity_0.0088371.h5'
-    filename13 = path + 'dat_kstar1_11_kstar2_11_SFstart_13700.0_SFduration_0.0_metallicity_0.01328149.h5'
-    filename14 = path + 'dat_kstar1_11_kstar2_11_SFstart_13700.0_SFduration_0.0_metallicity_0.01996108.h5'
-    filename15 = path + 'dat_kstar1_11_kstar2_11_SFstart_13700.0_SFduration_0.0_metallicity_0.03.h5'
-    
-    filename_list = [filename1, filename2, filename3, filename4, filename5,
-                     filename6, filename7, filename8, filename9, filename10,
-                     filename11, filename12, filename13, filename14, filename15]
-    label = '11_11'
-    return filename_list, label
-
-def getfiles_ONe(path):
-    filename1 = path + 'dat_kstar1_12_kstar2_10_12_SFstart_13700.0_SFduration_0.0_metallicity_0.0001.h5'
-    filename2 = path + 'dat_kstar1_12_kstar2_10_12_SFstart_13700.0_SFduration_0.0_metallicity_0.00015029.h5'
-    filename3 = path + 'dat_kstar1_12_kstar2_10_12_SFstart_13700.0_SFduration_0.0_metallicity_0.00022588.h5'
-    filename4 = path + 'dat_kstar1_12_kstar2_10_12_SFstart_13700.0_SFduration_0.0_metallicity_0.00033948.h5'
-    filename5 = path + 'dat_kstar1_12_kstar2_10_12_SFstart_13700.0_SFduration_0.0_metallicity_0.00051021.h5'
-    filename6 = path + 'dat_kstar1_12_kstar2_10_12_SFstart_13700.0_SFduration_0.0_metallicity_0.00076681.h5'
-    filename7 = path + 'dat_kstar1_12_kstar2_10_12_SFstart_13700.0_SFduration_0.0_metallicity_0.00115245.h5'
-    filename8 = path + 'dat_kstar1_12_kstar2_10_12_SFstart_13700.0_SFduration_0.0_metallicity_0.00173205.h5'
-    filename9 = path + 'dat_kstar1_12_kstar2_10_12_SFstart_13700.0_SFduration_0.0_metallicity_0.00260314.h5'
-    filename10 = path + 'dat_kstar1_12_kstar2_10_12_SFstart_13700.0_SFduration_0.0_metallicity_0.00391233.h5'
-    filename11 = path + 'dat_kstar1_12_kstar2_10_12_SFstart_13700.0_SFduration_0.0_metallicity_0.00587993.h5'
-    filename12 = path + 'dat_kstar1_12_kstar2_10_12_SFstart_13700.0_SFduration_0.0_metallicity_0.0088371.h5'
-    filename13 = path + 'dat_kstar1_12_kstar2_10_12_SFstart_13700.0_SFduration_0.0_metallicity_0.01328149.h5'
-    filename14 = path + 'dat_kstar1_12_kstar2_10_12_SFstart_13700.0_SFduration_0.0_metallicity_0.01996108.h5'
-    filename15 = path + 'dat_kstar1_12_kstar2_10_12_SFstart_13700.0_SFduration_0.0_metallicity_0.03.h5'
-    
-    filename_list = [filename1, filename2, filename3, filename4, filename5,
-                     filename6, filename7, filename8, filename9, filename10,
-                     filename11, filename12, filename13, filename14, filename15]
-    label = '12'
-    return filename_list, label
 
 def weighted_avg_and_std(values, weights):
     """
@@ -580,8 +506,8 @@ def create_population(pop_init, i, label, ratio, binfrac, interfile):
     pop_init[['bin_num', 'FIRE_index']] = pop_init[['bin_num', 'FIRE_index']].astype('int64')
     if interfile == True:
         pop_init[['bin_num', 'FIRE_index']].to_hdf('Lband_{}_{}_{}_inter.hdf'.format(label,
-                                                                                            met_arr[i+1],
-                                                                                            binfrac),
+                                                                                     met_arr[i+1],
+                                                                                     binfrac),
                                                    key='pop_init', format='t', append=True)    
     # Now that we've obtained an initial population, we make data cuts
     # of systems who wouldn't form in time for their FIRE age, or would
@@ -589,25 +515,23 @@ def create_population(pop_init, i, label, ratio, binfrac, interfile):
     pop_init = pop_init.loc[pop_init.tphys <= pop_init.age * 1000]
     if interfile == True:
         pop_init[['bin_num', 'FIRE_index']].to_hdf('Lband_{}_{}_{}_inter.hdf'.format(label, 
-                                                                                             met_arr[i+1], 
-                                                                                             binfrac), 
+                                                                                     met_arr[i+1], 
+                                                                                     binfrac), 
                                                     key='pop_age', format='t', append=True)
     
     pop_init, pop_merge = merging_pop(pop_init)
     if interfile == True:
         pop_merge[['bin_num', 'FIRE_index']].to_hdf('Lband_{}_{}_{}_inter.hdf'.format(label,
-                                                                                             met_arr[i+1], 
-                                                                                             binfrac), 
+                                                                                      met_arr[i+1], 
+                                                                                      binfrac), 
                                                     key='pop_merge', format='t', append=True)    
-    pop_merge = pd.DataFrame()
     
-    if interfile == True:
         pop_init[['bin_num', 'FIRE_index']].to_hdf('Lband_{}_{}_{}_inter.hdf'.format(label, 
-                                                                                            met_arr[i+1], 
-                                                                                            binfrac), 
+                                                                                     met_arr[i+1], 
+                                                                                     binfrac), 
                                 key='pop_nm', format='t', append=True)
     
-    
+    pop_merge = pd.DataFrame()
     pop_init, pop_RLOF = RLOF_pop(pop_init)
     
     if interfile == True:
@@ -615,13 +539,12 @@ def create_population(pop_init, i, label, ratio, binfrac, interfile):
                                                                                            met_arr[i+1], 
                                                                                            binfrac), 
                                                   key='pop_RLOF', format='t', append=True)
-    pop_RLOF = pd.DataFrame()
     
-    if interfile == True:
         pop_init[['bin_num', 'FIRE_index']].to_hdf('Lband_{}_{}_{}_inter.hdf'.format(label, 
                                                                                             met_arr[i+1], 
                                                                                             binfrac), 
                                 key='pop_nRLOF', format='t', append=True)
+    pop_RLOF = pd.DataFrame()
     
     # We now have a final population which we can evolve
     # using GW radiation
@@ -634,8 +557,8 @@ def create_population(pop_init, i, label, ratio, binfrac, interfile):
     
     if interfile == True:
         pop_init[['bin_num', 'FIRE_index', 'X', 'Y', 'Z']].to_hdf('Lband_{}_{}_{}_inter.hdf'.format(label, 
-                                                                                                           met_arr[i+1], 
-                                                                                                           binfrac), 
+                                                                                                    met_arr[i+1], 
+                                                                                                    binfrac), 
                                                                   key='pop_f', format='t', append=True)    
     if binfrac == 0.5:
         binfrac_write = 0.5
@@ -661,23 +584,24 @@ def create_population(pop_init, i, label, ratio, binfrac, interfile):
         print('got LISA band and added weight column')
     
         # LISA GW calculations:
-        LISA_band = LISA_calcs(LISA_band)
-        print('finished LISA band calculations')
+        #LISA_band = LISA_calcs(LISA_band)
+        #print('finished LISA band calculations')
 
         # Output to hdf files
         LISA_band.to_hdf('Lband_{}_{}_{}.hdf'.format(label, 
-                                                            met_arr[i+1], binfrac), 
+                                                     met_arr[i+1], binfrac), 
                          key='Lband', format='t', append=True)
     
         return
     
     
     
-def make_galaxy(filename, i, label, ratio, binfrac, interfile):
-    #import pdb
-    #pdb.set_trace()
+def make_galaxy(path, filename, i, label, ratio, binfrac, interfile, fire_path):
+    FIRE = pd.read_hdf(fire_path+'FIRE.h5').sort_values('met')
+
     rand_seed = np.random.randint(0, 100, 1)
     np.random.seed(rand_seed)
+    
     rand_seed = pd.DataFrame(rand_seed)
     rand_seed.to_hdf('Lband_{}_{}_{}.hdf'.format(label, met_arr[i+1], binfrac), 
                      key='rand_seed')
@@ -687,36 +611,21 @@ def make_galaxy(filename, i, label, ratio, binfrac, interfile):
     met_end = met_arr[i+1] / Z_sun
     
     # Calculating the formation time of each component:
-    conv = pd.read_hdf(filename, key='conv')
-    #bpp = pd.read_hdf(filename, key='bpp')
-    #if label == '10_10' or label == '11_10':
-    #    conv = pd.read_hdf(filename, key='conv')
-    #elif label == '11_11':
-    #    conv = bpp.loc[(bpp.kstar_1==11)&(bpp.kstar_2==11)].groupby('bin_num').first()  
-    #elif label == '12':
-    #     conv = bpp.loc[(bpp.kstar_1==12)&(bpp.kstar_2.isin([10,11,12]))].groupby('bin_num').first()  
-    #RLOFsep = bpp.loc[bpp.evol_type==3].groupby('bin_num').first()
-    #CEsep = bpp.loc[bpp.evol_type==7].groupby('bin_num').first()
-    #conv['CEsep'] = CEsep.sep.values
-    #conv['CEtime'] = CEsep.tphys.values
-    #conv['RLOFsep'] = RLOFsep.sep.values
-    #conv['RLOFtime'] = RLOFsep.tphys.values
-    #bpp = pd.DataFrame()
+    conv = pd.read_hdf(path+filename, key='conv')
     
-    # Re-writing the radii of each component:
-    rad_1 = rad_WD(conv.mass_1.values)
-    rad_2 = rad_WD(conv.mass_2.values)
-    conv['rad_1'] = rad_1
-    conv['rad_2'] = rad_2
-    
+    # Re-writing the radii of each component since the conv df 
+    # doesn't log the WD radius properly
+    conv['rad_1'] = rad_WD(conv.mass_1.values)
+    conv['rad_2'] = rad_WD(conv.mass_2.values)    
     
     # Use ratio to scale to astrophysical pop w/ specific binary frac.
     try:
-        mass_binaries = pd.read_hdf(filename, key='mass_stars').iloc[-1]
+        mass_binaries = pd.read_hdf(path+filename, key='mass_stars').iloc[-1]
     except:
         print('m_binaries key')
-        mass_binaries = pd.read_hdf(filename, key='mass_binaries').iloc[-1]
+        mass_binaries = pd.read_hdf(path+filename, key='mass_binaries').iloc[-1]
     mass_total = (1 + ratio) * mass_binaries
+    
     mass_total.to_hdf('Lband_{}_{}_{}.hdf'.format(label, met_arr[i+1], 
                                                   binfrac), key='mass_total')
     DWD_per_mass = len(conv) / mass_total
@@ -728,6 +637,7 @@ def make_galaxy(filename, i, label, ratio, binfrac, interfile):
         FIRE_bin = FIRE.loc[FIRE.met >= met_start]
     else:
         FIRE_bin = FIRE.loc[(FIRE.met >= met_start)&(FIRE.met <= met_end)]
+    FIRE = []
     
     # We sample by the integer number of systems per star particle,
     # as well as a probabilistic approach for the fractional component
@@ -795,290 +705,44 @@ def make_galaxy(filename, i, label, ratio, binfrac, interfile):
     
     return
 
-def Lband_files_10_10_var():
-    files = ['Lband_10_10_0.0001_0.4847.hdf',
-            'Lband_10_10_0.00015029_0.4732.hdf',
-            'Lband_10_10_0.00022588_0.4618.hdf',
-            'Lband_10_10_0.00033948_0.4503.hdf',
-            'Lband_10_10_0.00051021_0.4388.hdf',
-            'Lband_10_10_0.00076681_0.4274.hdf',
-            'Lband_10_10_0.00115245_0.4159.hdf',
-            'Lband_10_10_0.00173205_0.4044.hdf',
-            'Lband_10_10_0.00260314_0.3776.hdf',
-            'Lband_10_10_0.00391233_0.3426.hdf',
-            'Lband_10_10_0.00587993_0.3076.hdf',
-            'Lband_10_10_0.0088371_0.2726.hdf',
-            'Lband_10_10_0.01328149_0.2376.hdf',
-            'Lband_10_10_0.01996108_0.2027.hdf',
-            'Lband_10_10_0.03_0.1677.hdf']
+def Lband_files(kstar1, kstar2, var=True):
+    met_list = [0.0001, 0.00015029, 0.00022588, 0.00033948, 0.00051021, 
+                0.00076681, 0.00115245, 0.00173205, 0.00260314, 0.00391233, 
+                0.00587993, 0.0088371, 0.01328149, 0.01996108, 0.03]
+    if var:
+        var_list = [0.4847, 0.4732, 0.4618, 0.4503, 0.4388, 
+                    0.4274, 0.4159, 0.4044, 0.3776, 0.3426, 
+                    0.3076, 0.2726, 0.2376, 0.2027, 0.1677]
+        
+        if kstar1 != '12':
+            files = ['Lband_{}_{}_{}_{}.hdf'.format(kstar1, kstar2, met, var) for var, met in zip(var_list, met_list)]
+        else:
+            files = ['Lband_{}_{}_{}.hdf'.format(kstar1, met, var) for var, met in zip(var_list, met_list)]
+    else:
+        if kstar1 != '12':
+            files = ['Lband_{}_{}_{}_0.5.hdf'.format(kstar1, kstar2, met) for met in met_list]
+        else:
+            files = ['Lband_{}_{}_0.5.hdf'.format(kstar1, met) for met in met_list]
+    
     return files
 
-def Lband_files_11_10_var():
-    files = ['Lband_11_10_0.0001_0.4847.hdf',
-            'Lband_11_10_0.00015029_0.4732.hdf',
-            'Lband_11_10_0.00022588_0.4618.hdf',
-            'Lband_11_10_0.00033948_0.4503.hdf',
-            'Lband_11_10_0.00051021_0.4388.hdf',
-            'Lband_11_10_0.00076681_0.4274.hdf',
-            'Lband_11_10_0.00115245_0.4159.hdf',
-            'Lband_11_10_0.00173205_0.4044.hdf',
-            'Lband_11_10_0.00260314_0.3776.hdf',
-            'Lband_11_10_0.00391233_0.3426.hdf',
-            'Lband_11_10_0.00587993_0.3076.hdf',
-            'Lband_11_10_0.0088371_0.2726.hdf',
-            'Lband_11_10_0.01328149_0.2376.hdf',
-            'Lband_11_10_0.01996108_0.2027.hdf',
-            'Lband_11_10_0.03_0.1677.hdf']
-    return files
-
-def Lband_files_11_11_var():
-    files = ['Lband_11_11_0.0001_0.4847.hdf',
-            'Lband_11_11_0.00015029_0.4732.hdf',
-            'Lband_11_11_0.00022588_0.4618.hdf',
-            'Lband_11_11_0.00033948_0.4503.hdf',
-            'Lband_11_11_0.00051021_0.4388.hdf',
-            'Lband_11_11_0.00076681_0.4274.hdf',
-            'Lband_11_11_0.00115245_0.4159.hdf',
-            'Lband_11_11_0.00173205_0.4044.hdf',
-            'Lband_11_11_0.00260314_0.3776.hdf',
-            'Lband_11_11_0.00391233_0.3426.hdf',
-            'Lband_11_11_0.00587993_0.3076.hdf',
-            'Lband_11_11_0.0088371_0.2726.hdf',
-            'Lband_11_11_0.01328149_0.2376.hdf',
-            'Lband_11_11_0.01996108_0.2027.hdf',
-            'Lband_11_11_0.03_0.1677.hdf']
-    return files
-
-def Lband_files_12_var():
-    files = ['Lband_12_0.0001_0.4847.hdf',
-            'Lband_12_0.00015029_0.4732.hdf',
-            'Lband_12_0.00022588_0.4618.hdf',
-            'Lband_12_0.00033948_0.4503.hdf',
-            'Lband_12_0.00051021_0.4388.hdf',
-            'Lband_12_0.00076681_0.4274.hdf',
-            'Lband_12_0.00115245_0.4159.hdf',
-            'Lband_12_0.00173205_0.4044.hdf',
-            'Lband_12_0.00260314_0.3776.hdf',
-            'Lband_12_0.00391233_0.3426.hdf',
-            'Lband_12_0.00587993_0.3076.hdf',
-            'Lband_12_0.0088371_0.2726.hdf',
-            'Lband_12_0.01328149_0.2376.hdf',
-            'Lband_12_0.01996108_0.2027.hdf',
-            'Lband_12_0.03_0.1677.hdf']
-    return files
-
-def Lband_files_10_10_05():
-    files = ['Lband_10_10_0.0001_0.5.hdf',
-            'Lband_10_10_0.00015029_0.5.hdf',
-            'Lband_10_10_0.00022588_0.5.hdf',
-            'Lband_10_10_0.00033948_0.5.hdf',
-            'Lband_10_10_0.00051021_0.5.hdf',
-            'Lband_10_10_0.00076681_0.5.hdf',
-            'Lband_10_10_0.00115245_0.5.hdf',
-            'Lband_10_10_0.00173205_0.5.hdf',
-            'Lband_10_10_0.00260314_0.5.hdf',
-            'Lband_10_10_0.00391233_0.5.hdf',
-            'Lband_10_10_0.00587993_0.5.hdf',
-            'Lband_10_10_0.0088371_0.5.hdf',
-            'Lband_10_10_0.01328149_0.5.hdf',
-            'Lband_10_10_0.01996108_0.5.hdf',
-            'Lband_10_10_0.03_0.5.hdf']
-    return files
-
-def Lband_files_11_10_05():
-    files = ['Lband_11_10_0.0001_0.5.hdf',
-            'Lband_11_10_0.00015029_0.5.hdf',
-            'Lband_11_10_0.00022588_0.5.hdf',
-            'Lband_11_10_0.00033948_0.5.hdf',
-            'Lband_11_10_0.00051021_0.5.hdf',
-            'Lband_11_10_0.00076681_0.5.hdf',
-            'Lband_11_10_0.00115245_0.5.hdf',
-            'Lband_11_10_0.00173205_0.5.hdf',
-            'Lband_11_10_0.00260314_0.5.hdf',
-            'Lband_11_10_0.00391233_0.5.hdf',
-            'Lband_11_10_0.00587993_0.5.hdf',
-            'Lband_11_10_0.0088371_0.5.hdf',
-            'Lband_11_10_0.01328149_0.5.hdf',
-            'Lband_11_10_0.01996108_0.5.hdf',
-            'Lband_11_10_0.03_0.5.hdf']
-    return files
-
-def Lband_files_11_11_05():
-    files = ['Lband_11_11_0.0001_0.5.hdf',
-            'Lband_11_11_0.00015029_0.5.hdf',
-            'Lband_11_11_0.00022588_0.5.hdf',
-            'Lband_11_11_0.00033948_0.5.hdf',
-            'Lband_11_11_0.00051021_0.5.hdf',
-            'Lband_11_11_0.00076681_0.5.hdf',
-            'Lband_11_11_0.00115245_0.5.hdf',
-            'Lband_11_11_0.00173205_0.5.hdf',
-            'Lband_11_11_0.00260314_0.5.hdf',
-            'Lband_11_11_0.00391233_0.5.hdf',
-            'Lband_11_11_0.00587993_0.5.hdf',
-            'Lband_11_11_0.0088371_0.5.hdf',
-            'Lband_11_11_0.01328149_0.5.hdf',
-            'Lband_11_11_0.01996108_0.5.hdf',
-            'Lband_11_11_0.03_0.5.hdf']
-    return files
-
-def Lband_files_12_05():
-    files = ['Lband_12_0.0001_0.5.hdf',
-            'Lband_12_0.00015029_0.5.hdf',
-            'Lband_12_0.00022588_0.5.hdf',
-            'Lband_12_0.00033948_0.5.hdf',
-            'Lband_12_0.00051021_0.5.hdf',
-            'Lband_12_0.00076681_0.5.hdf',
-            'Lband_12_0.00115245_0.5.hdf',
-            'Lband_12_0.00173205_0.5.hdf',
-            'Lband_12_0.00260314_0.5.hdf',
-            'Lband_12_0.00391233_0.5.hdf',
-            'Lband_12_0.00587993_0.5.hdf',
-            'Lband_12_0.0088371_0.5.hdf',
-            'Lband_12_0.01328149_0.5.hdf',
-            'Lband_12_0.01996108_0.5.hdf',
-            'Lband_12_0.03_0.5.hdf']
-    return files
-
-def galaxy_files_10_10_var():
-    files = ['final_galaxy_10_10_0.0001_0.4847.hdf',
-            'final_galaxy_10_10_0.00015029_0.4732.hdf',
-            'final_galaxy_10_10_0.00022588_0.4618.hdf',
-            'final_galaxy_10_10_0.00033948_0.4503.hdf',
-            'final_galaxy_10_10_0.00051021_0.4388.hdf',
-            'final_galaxy_10_10_0.00076681_0.4274.hdf',
-            'final_galaxy_10_10_0.00115245_0.4159.hdf',
-            'final_galaxy_10_10_0.00173205_0.4044.hdf',
-            'final_galaxy_10_10_0.00260314_0.3776.hdf',
-            'final_galaxy_10_10_0.00391233_0.3426.hdf',
-            'final_galaxy_10_10_0.00587993_0.3076.hdf',
-            'final_galaxy_10_10_0.0088371_0.2726.hdf',
-            'final_galaxy_10_10_0.01328149_0.2376.hdf',
-            'final_galaxy_10_10_0.01996108_0.2027.hdf',
-            'final_galaxy_10_10_0.03_0.1677.hdf']
-    return files
-
-def galaxy_files_11_10_var():
-    files = ['final_galaxy_11_10_0.0001_0.4847.hdf',
-            'final_galaxy_11_10_0.00015029_0.4732.hdf',
-            'final_galaxy_11_10_0.00022588_0.4618.hdf',
-            'final_galaxy_11_10_0.00033948_0.4503.hdf',
-            'final_galaxy_11_10_0.00051021_0.4388.hdf',
-            'final_galaxy_11_10_0.00076681_0.4274.hdf',
-            'final_galaxy_11_10_0.00115245_0.4159.hdf',
-            'final_galaxy_11_10_0.00173205_0.4044.hdf',
-            'final_galaxy_11_10_0.00260314_0.3776.hdf',
-            'final_galaxy_11_10_0.00391233_0.3426.hdf',
-            'final_galaxy_11_10_0.00587993_0.3076.hdf',
-            'final_galaxy_11_10_0.0088371_0.2726.hdf',
-            'final_galaxy_11_10_0.01328149_0.2376.hdf',
-            'final_galaxy_11_10_0.01996108_0.2027.hdf',
-            'final_galaxy_11_10_0.03_0.1677.hdf']
-    return files
-
-def galaxy_files_11_11_var():
-    files = ['final_galaxy_11_11_0.0001_0.4847.hdf',
-            'final_galaxy_11_11_0.00015029_0.4732.hdf',
-            'final_galaxy_11_11_0.00022588_0.4618.hdf',
-            'final_galaxy_11_11_0.00033948_0.4503.hdf',
-            'final_galaxy_11_11_0.00051021_0.4388.hdf',
-            'final_galaxy_11_11_0.00076681_0.4274.hdf',
-            'final_galaxy_11_11_0.00115245_0.4159.hdf',
-            'final_galaxy_11_11_0.00173205_0.4044.hdf',
-            'final_galaxy_11_11_0.00260314_0.3776.hdf',
-            'final_galaxy_11_11_0.00391233_0.3426.hdf',
-            'final_galaxy_11_11_0.00587993_0.3076.hdf',
-            'final_galaxy_11_11_0.0088371_0.2726.hdf',
-            'final_galaxy_11_11_0.01328149_0.2376.hdf',
-            'final_galaxy_11_11_0.01996108_0.2027.hdf',
-            'final_galaxy_11_11_0.03_0.1677.hdf']
-    return files
-
-def galaxy_files_12_var():
-    files = ['final_galaxy_12_0.0001_0.4847.hdf',
-            'final_galaxy_12_0.00015029_0.4732.hdf',
-            'final_galaxy_12_0.00022588_0.4618.hdf',
-            'final_galaxy_12_0.00033948_0.4503.hdf',
-            'final_galaxy_12_0.00051021_0.4388.hdf',
-            'final_galaxy_12_0.00076681_0.4274.hdf',
-            'final_galaxy_12_0.00115245_0.4159.hdf',
-            'final_galaxy_12_0.00173205_0.4044.hdf',
-            'final_galaxy_12_0.00260314_0.3776.hdf',
-            'final_galaxy_12_0.00391233_0.3426.hdf',
-            'final_galaxy_12_0.00587993_0.3076.hdf',
-            'final_galaxy_12_0.0088371_0.2726.hdf',
-            'final_galaxy_12_0.01328149_0.2376.hdf',
-            'final_galaxy_12_0.01996108_0.2027.hdf',
-            'final_galaxy_12_0.03_0.1677.hdf']
-    return files
-
-def galaxy_files_10_10_05():
-    files = ['final_galaxy_10_10_0.0001_0.5.hdf',
-            'final_galaxy_10_10_0.00015029_0.5.hdf',
-            'final_galaxy_10_10_0.00022588_0.5.hdf',
-            'final_galaxy_10_10_0.00033948_0.5.hdf',
-            'final_galaxy_10_10_0.00051021_0.5.hdf',
-            'final_galaxy_10_10_0.00076681_0.5.hdf',
-            'final_galaxy_10_10_0.00115245_0.5.hdf',
-            'final_galaxy_10_10_0.00173205_0.5.hdf',
-            'final_galaxy_10_10_0.00260314_0.5.hdf',
-            'final_galaxy_10_10_0.00391233_0.5.hdf',
-            'final_galaxy_10_10_0.00587993_0.5.hdf',
-            'final_galaxy_10_10_0.0088371_0.5.hdf',
-            'final_galaxy_10_10_0.01328149_0.5.hdf',
-            'final_galaxy_10_10_0.01996108_0.5.hdf',
-            'final_galaxy_10_10_0.03_0.5.hdf']
-    return files
-
-def galaxy_files_11_10_05():
-    files = ['final_galaxy_11_10_0.0001_0.5.hdf',
-            'final_galaxy_11_10_0.00015029_0.5.hdf',
-            'final_galaxy_11_10_0.00022588_0.5.hdf',
-            'final_galaxy_11_10_0.00033948_0.5.hdf',
-            'final_galaxy_11_10_0.00051021_0.5.hdf',
-            'final_galaxy_11_10_0.00076681_0.5.hdf',
-            'final_galaxy_11_10_0.00115245_0.5.hdf',
-            'final_galaxy_11_10_0.00173205_0.5.hdf',
-            'final_galaxy_11_10_0.00260314_0.5.hdf',
-            'final_galaxy_11_10_0.00391233_0.5.hdf',
-            'final_galaxy_11_10_0.00587993_0.5.hdf',
-            'final_galaxy_11_10_0.0088371_0.5.hdf',
-            'final_galaxy_11_10_0.01328149_0.5.hdf',
-            'final_galaxy_11_10_0.01996108_0.5.hdf',
-            'final_galaxy_11_10_0.03_0.5.hdf']
-    return files
-
-def galaxy_files_11_11_05():
-    files = ['final_galaxy_11_11_0.0001_0.5.hdf',
-            'final_galaxy_11_11_0.00015029_0.5.hdf',
-            'final_galaxy_11_11_0.00022588_0.5.hdf',
-            'final_galaxy_11_11_0.00033948_0.5.hdf',
-            'final_galaxy_11_11_0.00051021_0.5.hdf',
-            'final_galaxy_11_11_0.00076681_0.5.hdf',
-            'final_galaxy_11_11_0.00115245_0.5.hdf',
-            'final_galaxy_11_11_0.00173205_0.5.hdf',
-            'final_galaxy_11_11_0.00260314_0.5.hdf',
-            'final_galaxy_11_11_0.00391233_0.5.hdf',
-            'final_galaxy_11_11_0.00587993_0.5.hdf',
-            'final_galaxy_11_11_0.0088371_0.5.hdf',
-            'final_galaxy_11_11_0.01328149_0.5.hdf',
-            'final_galaxy_11_11_0.01996108_0.5.hdf',
-            'final_galaxy_11_11_0.03_0.5.hdf']
-    return files
-
-def galaxy_files_12_05():
-    files = ['final_galaxy_12_0.0001_0.5.hdf',
-            'final_galaxy_12_0.00015029_0.5.hdf',
-            'final_galaxy_12_0.00022588_0.5.hdf',
-            'final_galaxy_12_0.00033948_0.5.hdf',
-            'final_galaxy_12_0.00051021_0.5.hdf',
-            'final_galaxy_12_0.00076681_0.5.hdf',
-            'final_galaxy_12_0.00115245_0.5.hdf',
-            'final_galaxy_12_0.00173205_0.5.hdf',
-            'final_galaxy_12_0.00260314_0.5.hdf',
-            'final_galaxy_12_0.00391233_0.5.hdf',
-            'final_galaxy_12_0.00587993_0.5.hdf',
-            'final_galaxy_12_0.0088371_0.5.hdf',
-            'final_galaxy_12_0.01328149_0.5.hdf',
-            'final_galaxy_12_0.01996108_0.5.hdf',
-            'final_galaxy_12_0.03_0.5.hdf']
+def galaxy_files(kstar1, kstar2, var=True):
+    met_list = [0.0001, 0.00015029, 0.00022588, 0.00033948, 0.00051021, 
+                0.00076681, 0.00115245, 0.00173205, 0.00260314, 0.00391233, 
+                0.00587993, 0.0088371, 0.01328149, 0.01996108, 0.03]
+    if var:
+        var_list = [0.4847, 0.4732, 0.4618, 0.4503, 0.4388, 
+                    0.4274, 0.4159, 0.4044, 0.3776, 0.3426, 
+                    0.3076, 0.2726, 0.2376, 0.2027, 0.1677]
+        
+        if kstar1 != '12':
+            files = ['final_galaxy_{}_{}_{}_{}.hdf'.format(kstar1, kstar2, met, var) for var, met in zip(var_list, met_list)]
+        else:
+            files = ['final_galaxy_{}_{}_{}.hdf'.format(kstar1, met, var) for var, met in zip(var_list, met_list)]
+    else:
+        if kstar1 != '12':
+            files = ['final_galaxy_{}_{}_{}_0.5.hdf'.format(kstar1, kstar2, met) for met in met_list]
+        else:
+            files = ['final_galaxy_{}_{}_0.5.hdf'.format(kstar1, met) for met in met_list]
+    
     return files
