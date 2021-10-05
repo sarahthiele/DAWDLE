@@ -352,101 +352,101 @@ def rad_WD(M):
     rad = np.max(np.array([R_NS, A]), axis=0)
     return rad
 
-#def A_val(kstar): 
-#    '''
-#    Returns the baryon number for each WD type
-#    to be used in (modified) Mestel cooling in
-#    WD_Cooling function. 4 corresponds to He,
-#    15 to CO and 17 to ONe.
-#    '''
-#    A_list = np.zeros(len(kstar)) 
-#    A_list[np.where(kstar == 10)] = 4 
-#    A_list[np.where(kstar == 11)] = 15 
-#    A_list[np.where(kstar == 12)] = 17 
-#    return A_list 
-#
-#def WD_Cooling(data, i):
-#    '''
-#    Modified Mestel Cooling as specified in Hurley (2003), 
-#    equation 1. Returns the evolved present-day luminosity
-#    of each binary component.
-#    
-#    Returns luminosity in Watts.
-#    '''
-#    def L_WD(A, b, x, M, Z, t):
-#        return (b * M * Z ** (0.4)) / (A * (t + 0.1)) ** x
-#    
-#    def b_old(A):
-#        b = 300 * (9000 * A) ** (5.3)
-#        return b
-#    
-#    x_old = 6.48
-#    b_young = 300
-#    x_young = 1.18
-#
-#    A1 = A_val(data.kstar_1.values)
-#    A2 = A_val(data.kstar_2.values)
-#    M1 = data.mass_1.values
-#    M2 = data.mass_2.values
-#    Z = met_arr[i+1] * np.ones(len(data))    
-#    t1 = data.t_evol_1.values
-#    t2 = data.t_evol_2.values
-#    
-#    L1_young = L_WD(A1, b_young, x_young, M1, Z, t1)
-#    L1 = L_WD(A1, b_old(A1), x_old, M1, Z, t1)
-#    L2_young = L_WD(A2, b_young, x_young, M2, Z, t2)
-#    L2 = L_WD(A2, b_old(A2), x_old, M2, Z, t2)
-#    
-#    L1[t1 < 9000.0] = L1_young[t1 < 9000.0]
-#    L2[t2 < 9000.0] = L2_young[t2 < 9000.0]
-#    L1 = L1 * L_sol
-#    L2 = L2 * L_sol
-#    return L1, L2
-#
-#def T_eff(L1, L2, data):
-#    '''
-#    Calculates effective temperature using Stefan-Boltzmann
-#    Law.
-#    '''
-#    sigma = 5.67037e-8 # Stefan-Boltzmann Constant
-#    r1 = data.rad_1.values * R_sol
-#    r2 = data.rad_2.values * R_sol
-#    T1 = (L1 / (4 * np.pi * sigma * r1 ** 2)) ** (1 / 4)
-#    T2 = (L2 / (4 * np.pi * sigma * r2 ** 2)) ** (1 / 4)
-#    return T1, T2
-#
-#def mag_bol(data, i):
-#    L1, L2 = WD_Cooling(data, i)
-#    d = data.dist_sun.values * 1000
-#    M1_bol = 4.8 - 2.5 * np.log10(L1 / L_sol)
-#    m1_bol = M1_bol + 5 * np.log10(d / 10)
-#    M2_bol = 4.8 - 2.5 * np.log10(L2 / L_sol)
-#    m2_bol = M2_bol + 5 * np.log10(d / 10)
-#    m_tot = -2.5 * np.log10(10 ** (-0.4 * m1_bol) + 10 ** (-0.4 * m2_bol))
-#    return m_tot
-#
-#def LISA_calcs(LISA_band):
-#    '''
-#    get h_0, chirp mass and chirp values for LISA-band systems.
-#    '''
-#    f_orb = LISA_band.f_gw.values / 2 * u.s**(-1)
-#    ecc = np.zeros(len(LISA_band))
-#    m1 = LISA_band.mass_1.values * u.M_sun
-#    m2 = LISA_band.mass_2.values * u.M_sun
-#    mc = utils.chirp_mass(m1, m2)
-#    t_obs = 4*u.yr
-#    dist = LISA_band.dist_sun.values * u.kpc   
-#    sources = source.Source(m_1=m1, m_2=m2, ecc=ecc, dist=dist, f_orb=f_orb,
-#                            gw_lum_tol=0.05, stat_tol=1e-2, interpolate_g=True)
-#    h_0 = sources.get_h_0_n(harmonics=[2]).reshape(len(LISA_band))
-#    chirps = utils.fn_dot(mc, f_orb, ecc, 2)
-#    
-#    LISA_band['h_0'] = h_0
-#    LISA_band['fdot'] = chirps.value
-#    LISA_band['']
-#    
-#    return LISA_band
-#
+ßdef A_val(kstar): 
+ß    '''
+ß    Returns the baryon number for each WD type
+ß    to be used in (modified) Mestel cooling in
+ß    WD_Cooling function. 4 corresponds to He,
+ß    15 to CO and 17 to ONe.
+ß    '''
+ß    A_list = np.zeros(len(kstar)) 
+ß    A_list[np.where(kstar == 10)] = 4 
+ß    A_list[np.where(kstar == 11)] = 15 
+ß    A_list[np.where(kstar == 12)] = 17 
+ß    return A_list 
+ß
+ßdef WD_Cooling(data, i):
+ß    '''
+ß    Modified Mestel Cooling as specified in Hurley (2003), 
+ß    equation 1. Returns the evolved present-day luminosity
+ß    of each binary component.
+ß    
+ß    Returns luminosity in Watts.
+ß    '''
+ß    def L_WD(A, b, x, M, Z, t):
+ß        return (b * M * Z ** (0.4)) / (A * (t + 0.1)) ** x
+ß    
+ß    def b_old(A):
+ß        b = 300 * (9000 * A) ** (5.3)
+ß        return b
+ß    
+ß    x_old = 6.48
+ß    b_young = 300
+ß    x_young = 1.18
+ß
+ß    A1 = A_val(data.kstar_1.values)
+ß    A2 = A_val(data.kstar_2.values)
+ß    M1 = data.mass_1.values
+ß    M2 = data.mass_2.values
+ß    Z = met_arr[i+1] * np.ones(len(data))    
+ß    t1 = data.t_evol_1.values
+ß    t2 = data.t_evol_2.values
+ß    
+ß    L1_young = L_WD(A1, b_young, x_young, M1, Z, t1)
+ß    L1 = L_WD(A1, b_old(A1), x_old, M1, Z, t1)
+ß    L2_young = L_WD(A2, b_young, x_young, M2, Z, t2)
+ß    L2 = L_WD(A2, b_old(A2), x_old, M2, Z, t2)
+ß    
+ß    L1[t1 < 9000.0] = L1_young[t1 < 9000.0]
+ß    L2[t2 < 9000.0] = L2_young[t2 < 9000.0]
+ß    L1 = L1 * L_sol
+ß    L2 = L2 * L_sol
+ß    return L1, L2
+ß
+ßdef T_eff(L1, L2, data):
+ß    '''
+ß    Calculates effective temperature using Stefan-Boltzmann
+ß    Law.
+ß    '''
+ß    sigma = 5.67037e-8 # Stefan-Boltzmann Constant
+ß    r1 = data.rad_1.values * R_sol
+ß    r2 = data.rad_2.values * R_sol
+ß    T1 = (L1 / (4 * np.pi * sigma * r1 ** 2)) ** (1 / 4)
+ß    T2 = (L2 / (4 * np.pi * sigma * r2 ** 2)) ** (1 / 4)
+ß    return T1, T2
+ß
+ßdef mag_bol(data, i):
+ß    L1, L2 = WD_Cooling(data, i)
+ß    d = data.dist_sun.values * 1000
+ß    M1_bol = 4.8 - 2.5 * np.log10(L1 / L_sol)
+ß    m1_bol = M1_bol + 5 * np.log10(d / 10)
+ß    M2_bol = 4.8 - 2.5 * np.log10(L2 / L_sol)
+ß    m2_bol = M2_bol + 5 * np.log10(d / 10)
+ß    m_tot = -2.5 * np.log10(10 ** (-0.4 * m1_bol) + 10 ** (-0.4 * m2_bol))
+ß    return m_tot
+ß
+ßdef LISA_calcs(LISA_band):
+ß    '''
+ß    get h_0, chirp mass and chirp values for LISA-band systems.
+ß    '''
+ß    f_orb = LISA_band.f_gw.values / 2 * u.s**(-1)
+ß    ecc = np.zeros(len(LISA_band))
+ß    m1 = LISA_band.mass_1.values * u.M_sun
+ß    m2 = LISA_band.mass_2.values * u.M_sun
+ß    mc = utils.chirp_mass(m1, m2)
+ß    t_obs = 4*u.yr
+ß    dist = LISA_band.dist_sun.values * u.kpc   
+ß    sources = source.Source(m_1=m1, m_2=m2, ecc=ecc, dist=dist, f_orb=f_orb,
+ß                            gw_lum_tol=0.05, stat_tol=1e-2, interpolate_g=True)
+ß    h_0 = sources.get_h_0_n(harmonics=[2]).reshape(len(LISA_band))
+ß    chirps = utils.fn_dot(mc, f_orb, ecc, 2)
+ß    
+ß    LISA_band['h_0'] = h_0
+ß    LISA_band['fdot'] = chirps.value
+ß    LISA_band['']
+ß    
+ß    return LISA_band
+ß
 def evolve(pop_init):
     '''
     Evolve an initial population of binary WD's using
