@@ -60,11 +60,13 @@ met_arr = np.logspace(np.log10(1e-4), np.log10(0.03), 15)
 met_arr = np.round(met_arr, 8)
 met_arr = np.append(0.0, met_arr)
 
-binfracs = np.array([0.4847, 0.4732, 0.4618, 0.4503, 0.4388, 0.4274, 0.4159, 0.4044, 
-		     0.3776, 0.3426, 0.3076, 0.2726, 0.2376, 0.2027, 0.1677])
+binfracs = np.array([0.4847, 0.4732, 0.4618, 0.4503, 0.4388, 
+                     0.4274, 0.4159, 0.4044, 0.3776, 0.3426, 
+                     0.3076, 0.2726, 0.2376, 0.2027, 0.1677])
 
-ratios = np.array([0.68, 0.71, 0.74, 0.78, 0.82, 0.86, 0.9, 
-		   0.94, 1.05, 1.22, 1.44, 1.7 , 2.05, 2.51, 3.17])
+ratios = np.array([0.68, 0.71, 0.74, 0.78, 0.82, 
+                   0.86, 0.9, 0.94, 1.05, 1.22, 
+                   1.44, 1.7 , 2.05, 2.51, 3.17])
 
 ratio_05 = 0.64
 
@@ -172,8 +174,6 @@ def get_ratios(binfracs):
 #===================================================================================
 # File and Organizing Functions:
 #===================================================================================
-
-path = 'datfiles/'
 
 def getfiles(kstar1, kstar2):
     met_list = [0.0001, 0.00015029, 0.00022588, 0.00033948, 0.00051021, 
@@ -352,101 +352,101 @@ def rad_WD(M):
     rad = np.max(np.array([R_NS, A]), axis=0)
     return rad
 
-def A_val(kstar): 
-    '''
-    Returns the baryon number for each WD type
-    to be used in (modified) Mestel cooling in
-    WD_Cooling function. 4 corresponds to He,
-    15 to CO and 17 to ONe.
-    '''
-    A_list = np.zeros(len(kstar)) 
-    A_list[np.where(kstar == 10)] = 4 
-    A_list[np.where(kstar == 11)] = 15 
-    A_list[np.where(kstar == 12)] = 17 
-    return A_list 
-
-def WD_Cooling(data, i):
-    '''
-    Modified Mestel Cooling as specified in Hurley (2003), 
-    equation 1. Returns the evolved present-day luminosity
-    of each binary component.
-    
-    Returns luminosity in Watts.
-    '''
-    def L_WD(A, b, x, M, Z, t):
-        return (b * M * Z ** (0.4)) / (A * (t + 0.1)) ** x
-    
-    def b_old(A):
-        b = 300 * (9000 * A) ** (5.3)
-        return b
-    
-    x_old = 6.48
-    b_young = 300
-    x_young = 1.18
-
-    A1 = A_val(data.kstar_1.values)
-    A2 = A_val(data.kstar_2.values)
-    M1 = data.mass_1.values
-    M2 = data.mass_2.values
-    Z = met_arr[i+1] * np.ones(len(data))    
-    t1 = data.t_evol_1.values
-    t2 = data.t_evol_2.values
-    
-    L1_young = L_WD(A1, b_young, x_young, M1, Z, t1)
-    L1 = L_WD(A1, b_old(A1), x_old, M1, Z, t1)
-    L2_young = L_WD(A2, b_young, x_young, M2, Z, t2)
-    L2 = L_WD(A2, b_old(A2), x_old, M2, Z, t2)
-    
-    L1[t1 < 9000.0] = L1_young[t1 < 9000.0]
-    L2[t2 < 9000.0] = L2_young[t2 < 9000.0]
-    L1 = L1 * L_sol
-    L2 = L2 * L_sol
-    return L1, L2
-
-def T_eff(L1, L2, data):
-    '''
-    Calculates effective temperature using Stefan-Boltzmann
-    Law.
-    '''
-    sigma = 5.67037e-8 # Stefan-Boltzmann Constant
-    r1 = data.rad_1.values * R_sol
-    r2 = data.rad_2.values * R_sol
-    T1 = (L1 / (4 * np.pi * sigma * r1 ** 2)) ** (1 / 4)
-    T2 = (L2 / (4 * np.pi * sigma * r2 ** 2)) ** (1 / 4)
-    return T1, T2
-
-def mag_bol(data, i):
-    L1, L2 = WD_Cooling(data, i)
-    d = data.dist_sun.values * 1000
-    M1_bol = 4.8 - 2.5 * np.log10(L1 / L_sol)
-    m1_bol = M1_bol + 5 * np.log10(d / 10)
-    M2_bol = 4.8 - 2.5 * np.log10(L2 / L_sol)
-    m2_bol = M2_bol + 5 * np.log10(d / 10)
-    m_tot = -2.5 * np.log10(10 ** (-0.4 * m1_bol) + 10 ** (-0.4 * m2_bol))
-    return m_tot
-
-def LISA_calcs(LISA_band):
-    '''
-    get h_0, chirp mass and chirp values for LISA-band systems.
-    '''
-    f_orb = LISA_band.f_gw.values / 2 * u.s**(-1)
-    ecc = np.zeros(len(LISA_band))
-    m1 = LISA_band.mass_1.values * u.M_sun
-    m2 = LISA_band.mass_2.values * u.M_sun
-    mc = utils.chirp_mass(m1, m2)
-    t_obs = 4*u.yr
-    dist = LISA_band.dist_sun.values * u.kpc   
-    sources = source.Source(m_1=m1, m_2=m2, ecc=ecc, dist=dist, f_orb=f_orb,
-                            gw_lum_tol=0.05, stat_tol=1e-2, interpolate_g=True)
-    h_0 = sources.get_h_0_n(harmonics=[2]).reshape(len(LISA_band))
-    chirps = utils.fn_dot(mc, f_orb, ecc, 2)
-    
-    LISA_band['h_0'] = h_0
-    LISA_band['fdot'] = chirps.value
-    LISA_band['']
-    
-    return LISA_band
-
+#def A_val(kstar): 
+#    '''
+#    Returns the baryon number for each WD type
+#    to be used in (modified) Mestel cooling in
+#    WD_Cooling function. 4 corresponds to He,
+#    15 to CO and 17 to ONe.
+#    '''
+#    A_list = np.zeros(len(kstar)) 
+#    A_list[np.where(kstar == 10)] = 4 
+#    A_list[np.where(kstar == 11)] = 15 
+#    A_list[np.where(kstar == 12)] = 17 
+#    return A_list 
+#
+#def WD_Cooling(data, i):
+#    '''
+#    Modified Mestel Cooling as specified in Hurley (2003), 
+#    equation 1. Returns the evolved present-day luminosity
+#    of each binary component.
+#    
+#    Returns luminosity in Watts.
+#    '''
+#    def L_WD(A, b, x, M, Z, t):
+#        return (b * M * Z ** (0.4)) / (A * (t + 0.1)) ** x
+#    
+#    def b_old(A):
+#        b = 300 * (9000 * A) ** (5.3)
+#        return b
+#    
+#    x_old = 6.48
+#    b_young = 300
+#    x_young = 1.18
+#
+#    A1 = A_val(data.kstar_1.values)
+#    A2 = A_val(data.kstar_2.values)
+#    M1 = data.mass_1.values
+#    M2 = data.mass_2.values
+#    Z = met_arr[i+1] * np.ones(len(data))    
+#    t1 = data.t_evol_1.values
+#    t2 = data.t_evol_2.values
+#    
+#    L1_young = L_WD(A1, b_young, x_young, M1, Z, t1)
+#    L1 = L_WD(A1, b_old(A1), x_old, M1, Z, t1)
+#    L2_young = L_WD(A2, b_young, x_young, M2, Z, t2)
+#    L2 = L_WD(A2, b_old(A2), x_old, M2, Z, t2)
+#    
+#    L1[t1 < 9000.0] = L1_young[t1 < 9000.0]
+#    L2[t2 < 9000.0] = L2_young[t2 < 9000.0]
+#    L1 = L1 * L_sol
+#    L2 = L2 * L_sol
+#    return L1, L2
+#
+#def T_eff(L1, L2, data):
+#    '''
+#    Calculates effective temperature using Stefan-Boltzmann
+#    Law.
+#    '''
+#    sigma = 5.67037e-8 # Stefan-Boltzmann Constant
+#    r1 = data.rad_1.values * R_sol
+#    r2 = data.rad_2.values * R_sol
+#    T1 = (L1 / (4 * np.pi * sigma * r1 ** 2)) ** (1 / 4)
+#    T2 = (L2 / (4 * np.pi * sigma * r2 ** 2)) ** (1 / 4)
+#    return T1, T2
+#
+#def mag_bol(data, i):
+#    L1, L2 = WD_Cooling(data, i)
+#    d = data.dist_sun.values * 1000
+#    M1_bol = 4.8 - 2.5 * np.log10(L1 / L_sol)
+#    m1_bol = M1_bol + 5 * np.log10(d / 10)
+#    M2_bol = 4.8 - 2.5 * np.log10(L2 / L_sol)
+#    m2_bol = M2_bol + 5 * np.log10(d / 10)
+#    m_tot = -2.5 * np.log10(10 ** (-0.4 * m1_bol) + 10 ** (-0.4 * m2_bol))
+#    return m_tot
+#
+#def LISA_calcs(LISA_band):
+#    '''
+#    get h_0, chirp mass and chirp values for LISA-band systems.
+#    '''
+#    f_orb = LISA_band.f_gw.values / 2 * u.s**(-1)
+#    ecc = np.zeros(len(LISA_band))
+#    m1 = LISA_band.mass_1.values * u.M_sun
+#    m2 = LISA_band.mass_2.values * u.M_sun
+#    mc = utils.chirp_mass(m1, m2)
+#    t_obs = 4*u.yr
+#    dist = LISA_band.dist_sun.values * u.kpc   
+#    sources = source.Source(m_1=m1, m_2=m2, ecc=ecc, dist=dist, f_orb=f_orb,
+#                            gw_lum_tol=0.05, stat_tol=1e-2, interpolate_g=True)
+#    h_0 = sources.get_h_0_n(harmonics=[2]).reshape(len(LISA_band))
+#    chirps = utils.fn_dot(mc, f_orb, ecc, 2)
+#    
+#    LISA_band['h_0'] = h_0
+#    LISA_band['fdot'] = chirps.value
+#    LISA_band['']
+#    
+#    return LISA_band
+#
 def evolve(pop_init):
     '''
     Evolve an initial population of binary WD's using
@@ -525,15 +525,13 @@ def create_population(pop_init, i, label, ratio, binfrac, interfile):
                                                                                       met_arr[i+1], 
                                                                                       binfrac), 
                                                     key='pop_merge', format='t', append=True)    
-    pop_merge = pd.DataFrame()
     
-    if interfile == True:
         pop_init[['bin_num', 'FIRE_index']].to_hdf('Lband_{}_{}_{}_inter.hdf'.format(label, 
                                                                                      met_arr[i+1], 
                                                                                      binfrac), 
                                 key='pop_nm', format='t', append=True)
     
-    
+    pop_merge = pd.DataFrame()
     pop_init, pop_RLOF = RLOF_pop(pop_init)
     
     if interfile == True:
@@ -541,13 +539,12 @@ def create_population(pop_init, i, label, ratio, binfrac, interfile):
                                                                                            met_arr[i+1], 
                                                                                            binfrac), 
                                                   key='pop_RLOF', format='t', append=True)
-    pop_RLOF = pd.DataFrame()
     
-    if interfile == True:
         pop_init[['bin_num', 'FIRE_index']].to_hdf('Lband_{}_{}_{}_inter.hdf'.format(label, 
                                                                                             met_arr[i+1], 
                                                                                             binfrac), 
                                 key='pop_nRLOF', format='t', append=True)
+    pop_RLOF = pd.DataFrame()
     
     # We now have a final population which we can evolve
     # using GW radiation
@@ -587,8 +584,8 @@ def create_population(pop_init, i, label, ratio, binfrac, interfile):
         print('got LISA band and added weight column')
     
         # LISA GW calculations:
-        LISA_band = LISA_calcs(LISA_band)
-        print('finished LISA band calculations')
+        #LISA_band = LISA_calcs(LISA_band)
+        #print('finished LISA band calculations')
 
         # Output to hdf files
         LISA_band.to_hdf('Lband_{}_{}_{}.hdf'.format(label, 
@@ -599,11 +596,12 @@ def create_population(pop_init, i, label, ratio, binfrac, interfile):
     
     
     
-def make_galaxy(filename, i, label, ratio, binfrac, interfile):
-    #import pdb
-    #pdb.set_trace()
+def make_galaxy(path, filename, i, label, ratio, binfrac, interfile, fire_path):
+    FIRE = pd.read_hdf(fire_path+'FIRE.h5').sort_values('met')
+
     rand_seed = np.random.randint(0, 100, 1)
     np.random.seed(rand_seed)
+    
     rand_seed = pd.DataFrame(rand_seed)
     rand_seed.to_hdf('Lband_{}_{}_{}.hdf'.format(label, met_arr[i+1], binfrac), 
                      key='rand_seed')
@@ -613,36 +611,21 @@ def make_galaxy(filename, i, label, ratio, binfrac, interfile):
     met_end = met_arr[i+1] / Z_sun
     
     # Calculating the formation time of each component:
-    conv = pd.read_hdf(filename, key='conv')
-    #bpp = pd.read_hdf(filename, key='bpp')
-    #if label == '10_10' or label == '11_10':
-    #    conv = pd.read_hdf(filename, key='conv')
-    #elif label == '11_11':
-    #    conv = bpp.loc[(bpp.kstar_1==11)&(bpp.kstar_2==11)].groupby('bin_num').first()  
-    #elif label == '12':
-    #     conv = bpp.loc[(bpp.kstar_1==12)&(bpp.kstar_2.isin([10,11,12]))].groupby('bin_num').first()  
-    #RLOFsep = bpp.loc[bpp.evol_type==3].groupby('bin_num').first()
-    #CEsep = bpp.loc[bpp.evol_type==7].groupby('bin_num').first()
-    #conv['CEsep'] = CEsep.sep.values
-    #conv['CEtime'] = CEsep.tphys.values
-    #conv['RLOFsep'] = RLOFsep.sep.values
-    #conv['RLOFtime'] = RLOFsep.tphys.values
-    #bpp = pd.DataFrame()
+    conv = pd.read_hdf(path+filename, key='conv')
     
-    # Re-writing the radii of each component:
-    rad_1 = rad_WD(conv.mass_1.values)
-    rad_2 = rad_WD(conv.mass_2.values)
-    conv['rad_1'] = rad_1
-    conv['rad_2'] = rad_2
-    
+    # Re-writing the radii of each component since the conv df 
+    # doesn't log the WD radius properly
+    conv['rad_1'] = rad_WD(conv.mass_1.values)
+    conv['rad_2'] = rad_WD(conv.mass_2.values)    
     
     # Use ratio to scale to astrophysical pop w/ specific binary frac.
     try:
-        mass_binaries = pd.read_hdf(filename, key='mass_stars').iloc[-1]
+        mass_binaries = pd.read_hdf(path+filename, key='mass_stars').iloc[-1]
     except:
         print('m_binaries key')
-        mass_binaries = pd.read_hdf(filename, key='mass_binaries').iloc[-1]
+        mass_binaries = pd.read_hdf(path+filename, key='mass_binaries').iloc[-1]
     mass_total = (1 + ratio) * mass_binaries
+    
     mass_total.to_hdf('Lband_{}_{}_{}.hdf'.format(label, met_arr[i+1], 
                                                   binfrac), key='mass_total')
     DWD_per_mass = len(conv) / mass_total
@@ -654,6 +637,7 @@ def make_galaxy(filename, i, label, ratio, binfrac, interfile):
         FIRE_bin = FIRE.loc[FIRE.met >= met_start]
     else:
         FIRE_bin = FIRE.loc[(FIRE.met >= met_start)&(FIRE.met <= met_end)]
+    FIRE = []
     
     # We sample by the integer number of systems per star particle,
     # as well as a probabilistic approach for the fractional component

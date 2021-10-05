@@ -43,9 +43,9 @@ parser.add_argument("--dat_path_new", default="./", type=str)
 args = parser.parse_args()
 
 kstar1_list = ['10', '11', '11', '12']
-kstar2_list = ['10', '10', '11', '12_10']
+kstar2_list = ['10', '10', '11', '10_12']
 
-for kstar1, kstar2 in tqdm.tqdm(zip(kstar1_list[2:], kstar2_list[2:])):
+for kstar1, kstar2 in tqdm.tqdm(zip(kstar1_list, kstar2_list)):
     fnames, label = getfiles(kstar1=kstar1, kstar2=kstar2)
     for f in tqdm.tqdm(fnames):
         newf = reduce_data(pathold=args.dat_path, pathnew=args.dat_path_new, filename=f, label=label)
