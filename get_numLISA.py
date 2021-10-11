@@ -1,42 +1,44 @@
-from funcs_v1 import *
+from funcs_v1 import Lband_files, galaxy_files
+import numpy as np
+import pandas as pd
 
-def get_numLISA(pathtoLband, Lbandfile):
+def get_numLISA(pathtoLband, Lbandfile, FIREmin=0.00015, FIREmax=13.346, Z_sun=0.02):
     num = 30
-    met_bins = np.logspace(np.log10(FIRE.met.min()), np.log10(FIRE.met.max()), num)*Z_sun
+    met_bins = np.logspace(np.log10(FIREmin), np.log10(FIREmax), num)*Z_sun
     
     if Lbandfile == 'old':
         He = pd.DataFrame()
-        for f in galaxy_files_10_10_var():
+        for f in galaxy_files(kstar1='10', kstar2='10', var=True):
             He = He.append(pd.read_hdf(pathtoLband + f, key='Lband'))  
         print('finished He + He')
         COHe = pd.DataFrame()
-        for f in galaxy_files_11_10_var():
+        for f in galaxy_files(kstar1='11', kstar2='10', var=True):
             COHe = COHe.append(pd.read_hdf(pathtoLband + f, key='Lband'))
         print('finished CO + He')
         CO = pd.DataFrame()
-        for f in galaxy_files_11_11_var():
+        for f in galaxy_files(kstar1='11', kstar2='11', var=True):
             CO = CO.append(pd.read_hdf(pathtoLband + f, key='Lband'))
         print('finished CO + CO')
         ONe = pd.DataFrame()
-        for f in galaxy_files_12_var():
+        for f in galaxy_files(kstar1='12', kstar2='10', var=True):
             ONe = ONe.append(pd.read_hdf(pathtoLband + f, key='Lband'))
         print('finished ONe + X')
     
     elif Lbandfile == 'new':
         He = pd.DataFrame()
-        for f in Lband_files_10_10_var():
+        for f in Lband_files(kstar1='10', kstar2='10', var=True):
             He = He.append(pd.read_hdf(pathtoLband + f, key='Lband'))
         print('finished He + He')
-        CO = pd.DataFrame()
-        for f in Lband_files_11_11_var():
-            CO = CO.append(pd.read_hdf(pathtoLband + f, key='Lband'))
-        print('finished CO + He')
         COHe = pd.DataFrame()
-        for f in Lband_files_11_10_var():
+        for f in Lband_files(kstar1='11', kstar2='10', var=True):
             COHe = COHe.append(pd.read_hdf(pathtoLband + f, key='Lband'))
+        print('finished CO + He')
+        CO = pd.DataFrame()
+        for f in Lband_files(kstar1='11', kstar2='11', var=True):
+            CO = CO.append(pd.read_hdf(pathtoLband + f, key='Lband'))
         print('finished CO + CO')
         ONe = pd.DataFrame()
-        for f in Lband_files_12_var():
+        for f in Lband_files(kstar1='12', kstar2='10', var=True):
             ONe = ONe.append(pd.read_hdf(pathtoLband + f, key='Lband'))
         print('finished ONe + X')
         
@@ -54,37 +56,37 @@ def get_numLISA(pathtoLband, Lbandfile):
     
     if Lbandfile == 'old':
         He05 = pd.DataFrame()
-        for f in galaxy_files_10_10_05():
+        for f in galaxy_files(kstar1='10', kstar2='10', var=False):
             He05 = He05.append(pd.read_hdf(pathtoLband + f, key='Lband'))
         print('finished He + He, F50')
         COHe05 = pd.DataFrame()
-        for f in galaxy_files_11_10_05():
+        for f in galaxy_files(kstar1='11', kstar2='10', var=False):
             COHe05 = COHe05.append(pd.read_hdf(pathtoLband + f, key='Lband'))
         print('finished CO + He, F50')
         CO05 = pd.DataFrame()
-        for f in galaxy_files_11_11_05():
+        for f in galaxy_files(kstar1='11', kstar2='11', var=False):
             CO05 = CO05.append(pd.read_hdf(pathtoLband + f, key='Lband'))
         print('finished CO + CO, F50')
         ONe05 = pd.DataFrame()
-        for f in galaxy_files_12_05():
+        for f in galaxy_files(kstar1='12', kstar2='10', var=False):
             ONe05 = ONe05.append(pd.read_hdf(pathtoLband + f, key='Lband'))
         print('finished ONe + X, F50') 
 
     elif Lbandfile == 'new':
         He05 = pd.DataFrame()
-        for f in Lband_files_10_10_05():
+        for f in Lband_files(kstar1='10', kstar2='10', var=False):
             He05 = He05.append(pd.read_hdf(pathtoLband + f, key='Lband'))
         print('finished He + He, F50')
         COHe05 = pd.DataFrame()
-        for f in Lband_files_11_10_05():
+        for f in Lband_files(kstar1='11', kstar2='10', var=False):
             COHe05 = COHe05.append(pd.read_hdf(pathtoLband + f, key='Lband'))
         print('finished CO + He, F50')
         CO05 = pd.DataFrame()
-        for f in Lband_files_11_11_05():
+        for f in Lband_files(kstar1='11', kstar2='11', var=False):
             CO05 = CO05.append(pd.read_hdf(pathtoLband + f, key='Lband'))
         print('finished CO + CO, F50')
         ONe05 = pd.DataFrame()
-        for f in Lband_files_12_05():
+        for f in Lband_files(kstar1='12', kstar2='10', var=False):
             ONe05 = ONe05.append(pd.read_hdf(pathtoLband + f, key='Lband'))
         print('finished ONe + X, F50')
     

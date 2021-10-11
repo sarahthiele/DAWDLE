@@ -1,4 +1,4 @@
-from funcs_v1 import getfiles
+from utils import getfiles
 import tqdm
 import argparse
 import pandas as pd
